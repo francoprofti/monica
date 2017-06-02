@@ -34,15 +34,7 @@
                 return false;
             }
 
-            
-            
-            
-            
-            
-            
-            
-            
-            
+           
             // adiciona a linha a tabela, e criar as hiddens para salvar a associação
             $('#adicionar').on('click',function(){
               

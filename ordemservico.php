@@ -15,12 +15,13 @@ if(!isset($_GET['busca'])){
  
     
     
-    $sql = "SELECT ordemservico.idordemservico AS id, funcionario.nome AS nomefuncionario,  ordemservico.datacriacao as data, faccionista.nomefac as faccionista, operacao.nomeoperacao as operacao, ordemservico.referencia, ordemservico.qnt, ordemservico.modelo, ordemservico.obs
+    $sql = "SELECT ordemservico.idordemservico AS id, funcionario.nome AS nomefuncionario,  ordemservico.datacriacao as data, faccionista.nomefac as faccionista, ordemservico.idreferencia, ordemservico.qnt, ordemservico.modelo, ordemservico.obs, referencia.codigoref
     FROM funcionario INNER JOIN ordemservico
     ON (funcionario.idfuncionario = ordemservico.idfuncionario) INNER JOIN faccionista
     ON (ordemservico.idfaccionista = faccionista.idfaccionista) INNER JOIN operacaofaccionista
-    ON (faccionista.idfaccionista = operacaofaccionista.idfaccionista) INNER JOIN operacao
-    ON (operacaofaccionista.idoperacao = operacao.idoperacao)  WHERE ordemservico.status = 0 GROUP BY ordemservico.idordemservico ORDER BY datcadastro DESC"; 
+    ON (faccionista.idfaccionista = operacaofaccionista.idfaccionista) INNER JOIN referencia
+    ON (ordemservico.idreferencia = referencia.idreferencia)
+    WHERE ordemservico.status <> '0' GROUP BY ordemservico.idordemservico ORDER BY datcadastro DESC LIMIT 10"; 
     $result = mysqli_query($conecta,$sql);
         
    
@@ -36,9 +37,6 @@ if(!isset($_GET['busca'])){
         if($tipo == "fac"){
             
             $tipo = "AND faccionista.nomefac like";    
-            
-        }elseif($tipo == "o"){
-            $tipo = "AND operacao.nomeoperacao like";
             
         }elseif($tipo == "r"){
             $tipo = "AND ordemservico.referencia like";
@@ -62,14 +60,15 @@ if(!isset($_GET['busca'])){
             $datfim = "";
         }
         
-        $sql = "SELECT ordemservico.idordemservico AS id, funcionario.nome AS nomefuncionario,  ordemservico.datacriacao as data, faccionista.nomefac as faccionista, operacao.nomeoperacao as operacao, ordemservico.referencia, ordemservico.qnt, ordemservico.modelo, ordemservico.obs
+        $sql = "SELECT ordemservico.idordemservico AS id, funcionario.nome AS nomefuncionario,  ordemservico.datacriacao as data, faccionista.nomefac as faccionista, ordemservico.idreferencia, ordemservico.qnt, ordemservico.modelo, ordemservico.obs,  referencia.codigoref
         FROM funcionario INNER JOIN ordemservico
         ON (funcionario.idfuncionario = ordemservico.idfuncionario) INNER JOIN faccionista
         ON (ordemservico.idfaccionista = faccionista.idfaccionista) INNER JOIN operacaofaccionista
-        ON (faccionista.idfaccionista = operacaofaccionista.idfaccionista) INNER JOIN operacao
-        ON (operacaofaccionista.idoperacao = operacao.idoperacao)
-        WHERE  ordemservico.status = 0 $tipo '%$nome%' $data
+        ON (faccionista.idfaccionista = operacaofaccionista.idfaccionista) INNER JOIN referencia
+        ON (ordemservico.idreferencia = referencia.idreferencia)
+        WHERE  ordemservico.status  <> '0' $tipo '%$nome%' $data
         GROUP BY ordemservico.idordemservico ORDER BY datcadastro DESC"; 
+        echo $sql;
         $result = mysqli_query($conecta,$sql);
         
         $pagina = (isset($_GET['pag']))? $_GET['pag'] : 1;
@@ -131,7 +130,6 @@ if(!isset($_GET['busca'])){
             <form name="formpesquisa" action="ordemservico.php" method="get">
                 <select name="tipo" style="width: 100px;">
                     <option value="fac">Faccionista</option>
-                    <option value="o">Operação</option>
                     <option value="r">Referência</option>
                     <option value="m">Modelo</option>
                     <option value="fun">Funcionario</option>
@@ -150,7 +148,6 @@ if(!isset($_GET['busca'])){
             <table>
                <tr>
                    <th style="width:200px;">Faccionista</th>
-                   <th style="width:200px;">Operação</th>
                    <th style="width:200px;">Referência</th>
                    <th style="width:50px;">Quantidade</th>
                    <th style="width:100px;">Modelo</th>
@@ -165,14 +162,13 @@ if(!isset($_GET['busca'])){
                    
                         
                     
-                    while($consulta = mysqli_fetch_array($result)) { 
+                 while($consulta = mysqli_fetch_array($result)) { 
                 ?>
 
 
                 <tr>
                     <td> <?php echo $consulta['faccionista']; ?></td>
-                    <td> <?php echo $consulta['operacao']; ?></td>
-                    <td> <?php echo $consulta['referencia']; ?></td>
+                    <td> <?php echo $consulta['codigoref']; ?></td>
                     <td> <?php echo $consulta['qnt']; ?></td>
                     <td> <?php echo $consulta['modelo']; ?></td>
                     <td> <?php echo $consulta['nomefuncionario']; ?></td>
