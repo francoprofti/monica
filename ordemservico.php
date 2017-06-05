@@ -1,7 +1,27 @@
 <html>
 <head>
-<link type="text/css" rel="stylesheet"  href="estilo/estilo.css">
+    <link type="text/css" rel="stylesheet"  href="estilo/estilo.css">
+
     <meta charset="utf-8">
+
+    <script language="JavaScript" type="text/javascript" src="js/jquery-3.2.1.min.js"></script>    
+    <script type="text/javascript">
+    
+        $(function(){
+            $('tbody tr').mouseover(function(){
+                 $(this).addClass('over');
+            }).mouseout(function(){
+                $(this).removeClass('over');
+            });
+        });
+    
+    </script>
+    <style type="text/css">
+
+            .over {
+            background: coral;
+            }
+    </style>
 
 </head>
 <?php
@@ -15,13 +35,24 @@ if(!isset($_GET['busca'])){
  
     
     
-    $sql = "SELECT ordemservico.idordemservico AS id, funcionario.nome AS nomefuncionario,  ordemservico.datacriacao as data, faccionista.nomefac as faccionista, operacao.nomeoperacao as operacao, ordemservico.referencia, ordemservico.qnt, ordemservico.modelo, ordemservico.obs
+    $sql = "SELECT ordemservico.idordemservico AS id, funcionario.nome AS nomefuncionario,  ordemservico.datacriacao as data, faccionista.nomefac as faccionista, ordemservico.idreferencia, ordemservico.qnt, ordemservico.modelo, ordemservico.obs, referencia.codigoref
     FROM funcionario INNER JOIN ordemservico
     ON (funcionario.idfuncionario = ordemservico.idfuncionario) INNER JOIN faccionista
     ON (ordemservico.idfaccionista = faccionista.idfaccionista) INNER JOIN operacaofaccionista
-    ON (faccionista.idfaccionista = operacaofaccionista.idfaccionista) INNER JOIN operacao
-    ON (operacaofaccionista.idoperacao = operacao.idoperacao)  WHERE ordemservico.status = 0 GROUP BY ordemservico.idordemservico ORDER BY datcadastro DESC"; 
+    ON (faccionista.idfaccionista = operacaofaccionista.idfaccionista) INNER JOIN referencia
+    ON (ordemservico.idreferencia = referencia.idreferencia)
+    WHERE ordemservico.status <> '0' GROUP BY ordemservico.idordemservico ORDER BY datcadastro DESC LIMIT 10"; 
     $result = mysqli_query($conecta,$sql);
+    
+   $nome = "";
+   $tipo = "";
+   $status = "";
+   $tipoetiqueta = "";
+   $data="";
+   $datini = "";
+   $datfim = "";
+        
+    
         
    
     
@@ -31,14 +62,12 @@ if(!isset($_GET['busca'])){
         
         $nome = $_GET['busca'];
         $tipo = $_GET['tipo'];
+        $status = $_GET['status'];
         $tipoetiqueta = $_GET['tipo'];
         
         if($tipo == "fac"){
             
             $tipo = "AND faccionista.nomefac like";    
-            
-        }elseif($tipo == "o"){
-            $tipo = "AND operacao.nomeoperacao like";
             
         }elseif($tipo == "r"){
             $tipo = "AND ordemservico.referencia like";
@@ -62,14 +91,15 @@ if(!isset($_GET['busca'])){
             $datfim = "";
         }
         
-        $sql = "SELECT ordemservico.idordemservico AS id, funcionario.nome AS nomefuncionario,  ordemservico.datacriacao as data, faccionista.nomefac as faccionista, operacao.nomeoperacao as operacao, ordemservico.referencia, ordemservico.qnt, ordemservico.modelo, ordemservico.obs
+        $sql = "SELECT ordemservico.idordemservico AS id, funcionario.nome AS nomefuncionario,  ordemservico.datacriacao as data, faccionista.nomefac as faccionista, ordemservico.idreferencia, ordemservico.qnt, ordemservico.modelo, ordemservico.obs,  referencia.codigoref
         FROM funcionario INNER JOIN ordemservico
         ON (funcionario.idfuncionario = ordemservico.idfuncionario) INNER JOIN faccionista
         ON (ordemservico.idfaccionista = faccionista.idfaccionista) INNER JOIN operacaofaccionista
-        ON (faccionista.idfaccionista = operacaofaccionista.idfaccionista) INNER JOIN operacao
-        ON (operacaofaccionista.idoperacao = operacao.idoperacao)
-        WHERE  ordemservico.status = 0 $tipo '%$nome%' $data
+        ON (faccionista.idfaccionista = operacaofaccionista.idfaccionista) INNER JOIN referencia
+        ON (ordemservico.idreferencia = referencia.idreferencia)
+        WHERE  ordemservico.status  = '$status' $tipo '%$nome%' $data
         GROUP BY ordemservico.idordemservico ORDER BY datcadastro DESC"; 
+        
         $result = mysqli_query($conecta,$sql);
         
         $pagina = (isset($_GET['pag']))? $_GET['pag'] : 1;
@@ -85,8 +115,8 @@ if(!isset($_GET['busca'])){
         $total = mysqli_num_rows($result);
         
         
-        $varpag = "tipo=".$tipo."&busca=".$nome."&datini=".$datini."&datfim=".$datfim."&buscar=Buscar";
-        $varetiqueta = "tipo=".$tipoetiqueta."&busca=".$nome."&datini=".$datini."&datfim=".$datfim;
+        $varpag = "tipo=".$tipo."&busca=".$nome."&datini=".$datini."&datfim=".$datfim."&buscar=Buscar&status=".$status;
+        $varetiqueta = "tipo=".$tipoetiqueta."&busca=".$nome."&datini=".$datini."&datfim=".$datfim."&status=".$status;
         
         
     }
@@ -130,15 +160,100 @@ if(!isset($_GET['busca'])){
             <legend>Pesquisar</legend>
             <form name="formpesquisa" action="ordemservico.php" method="get">
                 <select name="tipo" style="width: 100px;">
-                    <option value="fac">Faccionista</option>
-                    <option value="o">Operação</option>
-                    <option value="r">Referência</option>
-                    <option value="m">Modelo</option>
-                    <option value="fun">Funcionario</option>
+                    <?php 
+                        if($tipo != ""){
+                            if($tipoetiqueta == "fac"){
+            
+                              
+                                echo " <option selected value='fac'>Faccionista</option>
+                                        <option value='r'>Referência</option>
+                                        <option value='m'>Modelo</option>
+                                        <option value='fun'>Funcionario</option>";
+
+                            }elseif($tipoetiqueta == "r"){
+                              
+                                 echo " <option  value='fac'>Faccionista</option>
+                                        <option selected value='r'>Referência</option>
+                                        <option value='m'>Modelo</option>
+                                        <option value='fun'>Funcionario</option>";
+
+                            }elseif($tipoetiqueta == "m"){
+                              
+                                echo " <option  value='fac'>Faccionista</option>
+                                        <option  value='r'>Referência</option>
+                                        <option selected value='m'>Modelo</option>
+                                        <option value='fun'>Funcionario</option>";
+
+                            }elseif($tipoetiqueta == "fun"){
+                              
+                                echo " <option  value='fac'>Faccionista</option>
+                                        <option  value='r'>Referência</option>
+                                        <option  value='m'>Modelo</option>
+                                        <option selected value='fun'>Funcionario</option>";
+
+                            }
+                               
+
+                            
+                        }else{
+                             echo " <option  value='fac'>Faccionista</option>
+                                <option  value='r'>Referência</option>
+                                <option  value='m'>Modelo</option>
+                                <option  value='fun'>Funcionario</option>";
+                        }
+                    ?>
+                   
                 </select>
-                <input type="text" name="busca" size="30" placeholder="Digite o texto de busca">
-                <input type="date" name="datini" size="10" placeholder="Data de início">
-                <input type="date" name="datfim" size="10" placeholder="Data de fim">
+                <input type="text" name="busca" size="30" value="<?php echo $nome; ?>" placeholder="Digite o texto de busca">
+                <input type="date" name="datini" size="10" value="<?php echo $datini; ?>" placeholder="Data de início">
+                <input type="date" name="datfim" size="10" value="<?php echo $datfim; ?>"placeholder="Data de fim">
+                <select name="status" style="width:100px; ">
+                     <?php 
+                        if($status != ""){
+                            if($status == "0"){
+            
+                              
+                                echo " <option selected value='0'>Excluido</option>
+                                        <option value='1'>Pendente</option>
+                                        <option value='2'>Aprovada</option>
+                                        <option value='3'>Recebida</option>";
+
+                            }elseif($status == "1"){
+                              
+                                 echo " <option  value='0'>Excluido</option>
+                                        <option selected value='1'>Pendente</option>
+                                        <option value='2'>Aprovada</option>
+                                        <option value='3'>Recebida</option>";
+
+                            }elseif($status == "2"){
+                              
+                                echo " <option  value='0'>Excluido</option>
+                                        <option value='1'>Pendente</option>
+                                        <option selected value='2'>Aprovada</option>
+                                        <option value='3'>Recebida</option>";
+
+                            }elseif($status == "3"){
+                              
+                               echo " <option  value='0'>Excluido</option>
+                                        <option value='1'>Pendente</option>
+                                        <option value='2'>Aprovada</option>
+                                        <option selected value='3'>Recebida</option>";
+
+                            }
+                               
+
+                            
+                        }else{
+                             echo " <option value='0'>Excluido</option>
+                                    <option selected value='1'>Pendente</option>
+                                    <option value='2'>Aprovada</option>
+                                    <option value='3'>Recebida</option>";
+                        }
+                    ?>
+                    
+                    
+                   
+                </select>
                 <input type="submit" name="buscar" value="Buscar">
 
 
@@ -150,11 +265,10 @@ if(!isset($_GET['busca'])){
             <table>
                <tr>
                    <th style="width:200px;">Faccionista</th>
-                   <th style="width:200px;">Operação</th>
                    <th style="width:200px;">Referência</th>
                    <th style="width:50px;">Quantidade</th>
                    <th style="width:100px;">Modelo</th>
-                   <th style="width:100px;">Funcionario</th>
+                   <th style="width:100px;">Funcionário</th>
                    <th style="width:100px;">Data</th>
                    <th style="width:50px;">Editar</th>
                </tr>
@@ -165,14 +279,13 @@ if(!isset($_GET['busca'])){
                    
                         
                     
-                    while($consulta = mysqli_fetch_array($result)) { 
+                 while($consulta = mysqli_fetch_array($result)) { 
                 ?>
 
 
                 <tr>
                     <td> <?php echo $consulta['faccionista']; ?></td>
-                    <td> <?php echo $consulta['operacao']; ?></td>
-                    <td> <?php echo $consulta['referencia']; ?></td>
+                    <td> <?php echo $consulta['codigoref']; ?></td>
                     <td> <?php echo $consulta['qnt']; ?></td>
                     <td> <?php echo $consulta['modelo']; ?></td>
                     <td> <?php echo $consulta['nomefuncionario']; ?></td>
@@ -197,7 +310,10 @@ if(!isset($_GET['busca'])){
                         echo " <a href='ordemservico.php?pag=$i&".$varpag."'>".$i."</a> ";
                     } 
                 
-                    echo " <a href='etiquetas.php?".$varetiqueta."'>Imprimir Etiquetas</a> ";
+                    echo " <a href='etiquetas.php?".$varetiqueta."'>Imprimir Etiquetas</a>  / 
+                        <a href='relsimples.php?".$varetiqueta."'>Imprimir Relatório Simples</a> / 
+                        <a href='reldetalhado.php?".$varetiqueta."'>Imprimir Relatório Detalhado</a>
+                    ";
                     
                 }
                 

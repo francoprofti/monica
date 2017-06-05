@@ -1,6 +1,7 @@
 <html>
 <head>
     <link type="text/css" rel="stylesheet"  href="estilo/estilo.css">
+    
           
 </head>
     
@@ -85,11 +86,11 @@
                     </div>
                     
                     <div>
-                        <input type="text" name="nome" size="40" placeholder="Digite o nome do Funcinario"><br>
+                        <input type="text" required name="nome" size="40" placeholder="Digite o nome do Funcinario"><br>
                    
-                        <input type="text" name="matricula" size="40" placeholder="Digite a Matrícula"><br>
+                        <input type="text" required name="matricula" size="40" placeholder="Digite a Matrícula"><br>
 
-                        <input type="text" name="senha" size="40" placeholder="Digite a Senha"><br>
+                        <input type="text" required name="senha" size="40" placeholder="Digite a Senha"><br>
                         <input type="checkbox" name="adm" value="a">É administrador do Sistema?
                     
                     </div>

@@ -25,54 +25,42 @@
              
         </div>
         <div class="caminho">
-                
+                 <p><h3><a href="geral.php">Início</a> > Referências/Operação</h3></p>   
         </div>
         
         <div class="corpo">
             
                 <?php
-                    if($_SESSION['adm'] =="n"){
-                        
-                        header('location: geralordem.php');
-                    }
+                    if($_SESSION['adm'] =="a"){
                 ?>
                 <div>
-                    <a href="funcionario.php">
+                    <a href="referencia.php">
                         <div class="bigbutton">
-                            <p>FUNCIONÁRIOS</p>
+                            <p>REFERÊNCIAS</p>
                         </div>
                     </a>
-                    <a href="refop.php">
+                    <a href="operacao.php">
                         <div class="bigbutton">
-                            <p>REFRÊNCIAS E OPERAÇÕES</p>
+                            <p>OPERAÇÕES</p>
                         </div>
-                    </a>
-                </div>
-                <div>
-                    <a href="faccionista.php">
-                        <div class="bigbutton">
-                            <p>FACCIONISTAS</p>
-                        </div>
-                    </a>
-                   <a href="geralordem.php">
-                    <div class="bigbutton">
-                        <p>ORDEM DE SERVIÇO</p>
-                    </div>
                     </a>
                 </div>
                 
-             <!---   <div>
-                   <a href="novaordem.php"> 
-                       <div class="bigbutton" style="margin-left: 275px; margin-top: 68px;">
-                        <p>ORDEM DE SERVIÇO</p>
-                       </div>
-                    </a>
-                </div> --->
+                <?php
+                    }else{
+                ?>
+                <div>
+                
+                        <p>Vôce não tem acesso a esta tela</p>
+                
+                </div>
 
             
             
             
-               
+                <?php
+                    }
+                ?>
             
         </div>
     

@@ -14,8 +14,10 @@
        
     
         $nomeoperacao = $_POST['nome'];
+        $parte = $_POST['parte'];
+        $codigo = $_POST['codigo'];
 
-        $sql = "INSERT INTO operacao (idoperacao, nomeoperacao) VALUES (NULL, '$nomeoperacao');"; 
+        $sql = "INSERT INTO operacao (idoperacao, nomeoperacao,status,codigo,parte) VALUES (NULL, '$nomeoperacao','0','$codigo','$parte');"; 
         $result = mysqli_query($conecta,$sql); 
         if($result){
             $sucesso = "salvou";
@@ -51,7 +53,7 @@
             <p><h3><a href="geral.php">Início</a> > <a href="operacao.php">Operações</a> > Nova Operação</h3></p>   
         </div>
         <div class="corpo">
-            <div class="interna">
+            <div class="interna" style="text-aling:left;">
                 <?php 
                     if($sucesso == "salvou"){
                         echo"<SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>
@@ -69,15 +71,35 @@
                         echo"<script>alert('Ocorreu algum erro ao Salvar!Consulte o suporte!');</script>";
                     }
                 ?>
-                <fieldset>
+                <fieldset >
                     <legend> Cadastrar nova operação</legend>
                 <form name="cadoperacao" action="novaoperacao.php" method="post">
-                    <label>
-                        Operação:
-                    </label>
-                    <input type="text" name="nome" size="80" placeholder="Digite o nome da operação e salve">
-                    <br>
-                    <input type="submit" value="Salvar" name="salvar">
+                    
+                    <div style="width:200px;height:150px;float:left;text-align:right; ">
+                        Código:<br><br>
+                        Parte:<br><br>
+                        Operação:<br>
+                    </div>
+                    
+                    <div style="width:200px;height:150px;float:left;">
+                        <input type="text" required name="codigo" size="80" placeholder="Ex: 001">
+                    
+                    
+                        <select required name="parte">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                    
+                    
+                   <input required type="text" name="nome" size="80" placeholder="Digite o nome da operação e salve">
+                         <input type="submit" value="Salvar" name="salvar">
+                    
+                    </div>
+                    
+                     
+                   
                 </form>
                 </fieldset>
             </div>

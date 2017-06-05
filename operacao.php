@@ -1,6 +1,24 @@
 <html>
 <head>
     <link type="text/css" rel="stylesheet"  href="estilo/estilo.css">
+    <script language="JavaScript" type="text/javascript" src="js/jquery-3.2.1.min.js"></script>    
+    <script type="text/javascript">
+    
+        $(function(){
+            $('tbody tr').mouseover(function(){
+                 $(this).addClass('over');
+            }).mouseout(function(){
+                $(this).removeClass('over');
+            });
+        });
+    
+    </script>
+    <style type="text/css">
+
+            .over {
+            background: coral;
+            }
+    </style>
           
 </head>
     <?php
@@ -47,7 +65,7 @@
             <div class="topo">
            
             <div class="userlogado">
-                <div class="btnsup"><p><a href="geral.php">Voltar</a></p></div>
+                <div class="btnsup"><p><a href="refop.php">Voltar</a></p></div>
                 <div class="btnsup"><p><a href="novaoperacao.php">Novo</a></p></div>
             </div>
             
@@ -61,7 +79,7 @@
              
         </div>
         <div class="caminho">
-                <p><h3><a href="geral.php">Início</a> > Operações</h3></p>   
+                <p><h3><a href="geral.php">Início</a> > <a href="refop.php">Referências / Operações</a> > Operações</h3></p>   
         </div>
         <div class="corpo">
             <div class="interna">

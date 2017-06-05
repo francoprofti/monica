@@ -1,6 +1,24 @@
 <html>
 <head>
     <link type="text/css" rel="stylesheet"  href="estilo/estilo.css">
+     <script language="JavaScript" type="text/javascript" src="js/jquery-3.2.1.min.js"></script>    
+    <script type="text/javascript">
+    
+        $(function(){
+            $('tbody tr').mouseover(function(){
+                 $(this).addClass('over');
+            }).mouseout(function(){
+                $(this).removeClass('over');
+            });
+        });
+    
+    </script>
+    <style type="text/css">
+
+            .over {
+            background: coral;
+            }
+    </style>
           
 </head>
     <?php

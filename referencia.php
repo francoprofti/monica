@@ -2,7 +2,7 @@
 <head>
 <link type="text/css" rel="stylesheet"  href="estilo/estilo.css">
     <meta charset="utf-8">
-     <script language="JavaScript" type="text/javascript" src="js/jquery-3.2.1.min.js"></script>    
+    <script language="JavaScript" type="text/javascript" src="js/jquery-3.2.1.min.js"></script>    
     <script type="text/javascript">
     
         $(function(){
@@ -29,7 +29,8 @@ include 'conecta.php';
    if(isset($_GET['busca'])){
        
         $nome = $_GET['busca'];
-        $sql = "SELECT * FROM faccionista WHERE status = 0 AND nomefac LIKE '%$nome%'ORDER BY nomefac ASC"; 
+        $sql = "SELECT * FROM referencia WHERE status = 0 AND codigoref LIKE '%$nome%'ORDER BY codigoref ASC"; 
+       
         $result = mysqli_query($conecta,$sql); 
        
     
@@ -52,7 +53,7 @@ include 'conecta.php';
        
    }else{
        
-       $sql = "SELECT * FROM faccionista WHERE status = 0 ORDER BY nomefac ASC LIMIT 0,10"; 
+       $sql = "SELECT * FROM referencia WHERE status = 0 ORDER BY codigoref ASC LIMIT 0,10"; 
        $result = mysqli_query($conecta,$sql); 
        
    }
@@ -69,8 +70,9 @@ include 'conecta.php';
             <div class="topo">
            
             <div class="userlogado">
-                <div class="btnsup"><p><a href="geral.php">Voltar</a></p></div>
-                <div class="btnsup"><p><a href="novofaccionista.php">Novo</a></p></div>
+                <div class="btnsup"><p><a href="refop.php">Voltar</a></p></div>
+                <div class="btnsup"><p><a href="novareferencia.php">Nova</a></p></div>
+                <div class="btnsup" style="width:200px;"><p><a href="refplanilha.php">Atualizar via Planilha</a></p></div>
             </div>
             
             <div class="botaosup">
@@ -83,14 +85,14 @@ include 'conecta.php';
              
         </div>
         <div class="caminho">
-                <p><h3><a href="geral.php">Início</a> > Faccionista</h3></p>   
+                <p><h3><a href="geral.php">Início</a> > <a href="refop.php">Referências / Operações</a> > Referência</h3></p>   
         </div>
     <div class="corpo">
         <div class="interna">
 
             <fieldset>
                 <legend>Pesquisar</legend>
-                <form name="formpesquisa" action="faccionista.php" method="get">
+                <form name="formpesquisa" action="referencia.php" method="get">
 
                     <input type="text" name="busca" size="40" placeholder="Digite o texto de busca">
 
@@ -105,7 +107,7 @@ include 'conecta.php';
 
             <table>
                <tr>
-                    <th>Faccionista</th>
+                    <th>Referências</th>
                     <th style="width:20px;">Editar</th>
                </tr>
                 <tr>
@@ -117,11 +119,11 @@ include 'conecta.php';
 
 
                 <tr>
-                    <td> <?php print $consulta['nomefac'] ?></td>
+                    <td> <?php print $consulta['codigoref'] ?></td>
                     <td>
                         
-                        <a href="editafaccionista.php?id=<?php echo $consulta['idfaccionista']?>"><img src="imagens/editar.png" width="20px" height="20px"></a>
-                        <a href="editafaccionista.php?id=<?php echo $consulta['idfaccionista']?>&del=true"><img src="imagens/excluir.png" width="20px" height="20px"></a>
+                        <a href="editareferencia.php?id=<?php echo $consulta['idreferencia']?>"><img src="imagens/editar.png" width="20px" height="20px"></a>
+                      <!--  <a href="editareferencia.php?id=<?php echo $consulta['idreferencia']?>&del=true"><img src="imagens/excluir.png" width="20px" height="20px"></a> -->
                     </td>
 
                 </tr>
@@ -136,7 +138,7 @@ include 'conecta.php';
                         echo "Veja mais resultados ";
 
                         for($i = 1; $i < $numPaginas + 1; $i++) {
-                            echo " <a href='faccionista.php?pag=$i&".$varpag."'>".$i."</a> ";
+                            echo " <a href='referencia.php?pag=$i&".$varpag."'>".$i."</a> ";
                         }    
                     }
 

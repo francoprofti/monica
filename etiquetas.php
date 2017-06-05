@@ -6,14 +6,12 @@
         
         $nome = $_GET['busca'];
         $tipo = $_GET['tipo'];
+        $status = $_GET['status'];
         $tipoetiqueta = $_GET['tipo'];
         
         if($tipo == "fac"){
             
             $tipo = "AND faccionista.nomefac like";    
-            
-        }elseif($tipo == "o"){
-            $tipo = "AND operacao.nomeoperacao like";
             
         }elseif($tipo == "r"){
             $tipo = "AND ordemservico.referencia like";
@@ -37,18 +35,16 @@
             $datfim = "";
         }
         
-        $sql = "SELECT ordemservico.idordemservico AS id, funcionario.nome AS nomefuncionario,  ordemservico.datacriacao as data, faccionista.nomefac as faccionista, operacao.nomeoperacao as operacao, ordemservico.referencia, ordemservico.qnt, ordemservico.modelo, ordemservico.obs
-        FROM funcionario INNER JOIN ordemservico
-        ON (funcionario.idfuncionario = ordemservico.idfuncionario) INNER JOIN faccionista
-        ON (ordemservico.idfaccionista = faccionista.idfaccionista) INNER JOIN operacaofaccionista
-        ON (faccionista.idfaccionista = operacaofaccionista.idfaccionista) INNER JOIN operacao
-        ON (operacaofaccionista.idoperacao = operacao.idoperacao)
-        WHERE  ordemservico.status = 0 $tipo '%$nome%' $data
-        GROUP BY ordemservico.idordemservico ORDER BY datcadastro DESC"; 
+        $sql = "SELECT *  FROM operacao  
+                INNER JOIN  ordemoperacao ON (operacao.idoperacao = ordemoperacao.idoperacao)
+                INNER JOIN ordemservico ON (ordemoperacao.idordemservico = ordemservico.idordemservico)
+                INNER JOIN faccionista ON (ordemservico.idfaccionista = faccionista.idfaccionista)
+                INNER JOIN referencia  ON (ordemservico.idreferencia = referencia.idreferencia)
+                WHERE  ordemservico.status  = '$status' $tipo '%$nome%' $data
+                ORDER BY ordemservico.datacriacao DESC"; 
         $result = mysqli_query($conecta,$sql);
-        
+       
       
-        
         
     }
     
@@ -61,15 +57,21 @@
         <div id="content">
             
             <?php
-                  while($consulta = mysqli_fetch_array($result)) { 
+                    $idordem = "";
+                  while($consulta = mysqli_fetch_array($result)) {
+                  if($idordem != $consulta['idordemservico']){
+                      
+                  
+                    
             ?>
             
             
            
             <div class="etia">
+                
                 <div class="fac">
                     <div class="titulfac">
-                        Faccionista: <br><b><?php echo $consulta['faccionista']; ?></b>
+                        Faccionista: <br><b><?php echo $consulta['nomefac']; ?></b>
                     </div>
                     <div class="titulfac" style="text-align: right;">
                         Data Saída:<br>
@@ -86,7 +88,7 @@
                         <span>Modelo</span>
                     </div><br>
                     <div>
-                        <span><b><?php echo $consulta['referencia']; ?></b></span>
+                        <span><b><?php echo $consulta['codigoref']; ?></b></span>
                         <span><b><?php echo $consulta['qnt']; ?></b></span>
                         <span><b><?php echo $consulta['modelo']; ?></b></span>
                     </div>
@@ -94,16 +96,24 @@
                 </div>
                 <div class="operacao">
                     <div>
-                        Operação: 
+                         Observação:  <b><?php echo $consulta['obs']; ?></b>
                        
                     </div>
                     <div>
-                         <b><?php echo " ".$consulta['operacao']; ?></b>
+                         
                     </div>
                     
                 </div>
                 <div id="obs">
-                    Observação:  <b><?php echo $consulta['obs']; ?></b>
+                        Operação:<br>
+                        <b><?php 
+                                $sqloperacao = "SELECT * FROM ordemoperacao INNER JOIN operacao ON (ordemoperacao.idoperacao = operacao.idoperacao) WHERE ordemoperacao.idordemservico=".$consulta['idordemservico'];
+                                $resultop = mysqli_query($conecta,$sqloperacao);  
+                                while($consultaop = mysqli_fetch_array($resultop)) {
+                                        echo $consultaop['codigo']." - ".$consultaop['nomeoperacao']." / ";
+                                  }
+                          ?>
+                        </b>
                 </div>
             </div>
             
@@ -111,7 +121,7 @@
             <div class="etia">
                 <div class="fac">
                     <div class="titulfac">
-                        Faccionista: <br><b><?php echo $consulta['faccionista']; ?></b>
+                        Faccionista: <br><b><?php echo $consulta['nomefac']; ?></b>
                     </div>
                     <div class="titulfac">
                         Data Saída:<br>
@@ -128,7 +138,7 @@
                         <span>Modelo</span>
                     </div><br>
                     <div>
-                        <span><b><?php echo $consulta['referencia']; ?></b></span>
+                        <span><b><?php echo $consulta['codigoref']; ?></b></span>
                         <span><b><?php echo $consulta['qnt']; ?></b></span>
                         <span><b><?php echo $consulta['modelo']; ?></b></span>
                     </div>
@@ -136,21 +146,33 @@
                 </div>
                 <div class="operacao">
                     <div>
-                        Operação: 
+                        Observação:  <b><?php echo $consulta['obs']; ?></b> 
                        
                     </div>
                     <div>
-                         <b><?php echo " ".$consulta['operacao']; ?></b>
+                        
                     </div>
                     
                 </div>
                 <div id="obs">
-                    Observação:  <b><?php echo $consulta['obs']; ?></b>
+                   Operação: <br>
+                     <b><?php 
+                            $sqloperacao = "SELECT * FROM ordemoperacao INNER JOIN operacao ON (ordemoperacao.idoperacao = operacao.idoperacao) WHERE ordemoperacao.idordemservico=".$consulta['idordemservico'];
+                            $resultop = mysqli_query($conecta,$sqloperacao);  
+                            while($consultaop = mysqli_fetch_array($resultop)) {
+                                    echo $consultaop['codigo']." - ".$consultaop['nomeoperacao']." / ";
+                              }
+                      ?>
+                    </b>
+                    
                 </div>
             </div>
             
             <?php
+                      
+                $idordem = $consulta['idordemservico'];      
                   }
+                }
             ?>
         </div>
         

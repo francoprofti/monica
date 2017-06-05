@@ -11,9 +11,11 @@
     if( isset($_POST['nome']) ){
        
         $nome = $_POST['nome'];
+        $codigo = $_POST['codigo'];
+        $parte = $_POST['parte'];
         $id = $_POST['id'];
     
-        $sql = "UPDATE `operacao` SET `nomeoperacao` = '$nome'  WHERE `operacao`.`idoperacao` = '$id'"; 
+        $sql = "UPDATE `operacao` SET `nomeoperacao` = '$nome',`codigo` = '$codigo' , `parte` = '$parte' WHERE `operacao`.`idoperacao` = '$id'"; 
         $result = mysqli_query($conecta,$sql); 
     
         if($result){
@@ -74,7 +76,8 @@
 
             while($consulta = mysqli_fetch_array($result)) { 
                 $nome = $consulta['nomeoperacao'];
-               
+                $codigo = $consulta['codigo'];
+                $parte = $consulta['parte'];
             }  
         
         
@@ -141,15 +144,45 @@
                 ?>
                 <fieldset>
                     <legend> Cadastrar nova operação</legend>
+                
                 <form name="cadoperacao" action="editaoperacao.php" method="post">
-                    <label>
-                        Operação:
+                    
+                    <div style="width:200px;height:150px;float:left;text-align:right; ">
+                        Código:<br><br>
+                        Parte:<br><br>
+                        Operação:<br>
+                    </div>
+                    
+                    <div style="width:200px;height:150px;float:left;">
                         <input type="hidden" name="id" size="80" placeholder="Digite o nome da operação e salve" value="<?php echo $id;?>">    
-                    </label>
-                    <input type="text" name="nome" size="80" placeholder="Digite o nome da operação e salve" value="<?php echo $nome;?>">
-                    <br>
-                    <input type="submit" value="Salvar" name="salvar">
-                </form>
+                        <input type="text" name="codigo" size="80" placeholder="Ex: 001" value="<?php echo $codigo;?>">
+                    
+                    
+                        <select name="parte">
+                            <?php 
+                                for($i=1;$i<=4;$i++){
+                                     
+                                         if($i == $parte){
+                                             echo "<option value=".$i." selected>".$i."</option>";
+                                         }else{
+                                            echo "<option value=".$i.">".$i."</option>";        
+                                         }
+                                }
+                            ?>
+                            
+                        </select>
+                    
+                    
+                   <input type="text" name="nome" size="80" placeholder="Digite o nome da operação e salve" value="<?php echo $nome;?>">
+                         <input type="submit" value="Salvar" name="salvar">
+                    
+                    </div>
+                    
+                     
+                   
+                </form>    
+                    
+                    
                 </fieldset>
             </div>
         </div>
